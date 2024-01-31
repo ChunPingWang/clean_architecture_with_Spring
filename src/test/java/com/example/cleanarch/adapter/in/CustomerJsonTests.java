@@ -28,7 +28,19 @@ public class CustomerJsonTests {
     }
 
     @Test
-    void myTest(){
-        assertThat(2).isEqualTo(2);
+    void customerDeserializationTest() throws IOException {
+       String expected = """
+               {
+                "id": 752068,
+                "name": "Rex Wang",
+                "age": 55
+               }
+               """;
+       assertThat(json.parse(expected))
+               .isEqualTo(new Customer(752068L, "Rex Wang", 55));
+       assertThat(json.parseObject(expected).id()).isEqualTo(752068);
+       assertThat(json.parseObject(expected).name()).isEqualTo("Rex Wang");
+       assertThat(json.parseObject(expected).age()).isEqualTo(55);
     }
+     
 }
