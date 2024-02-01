@@ -11,7 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/customers")
 public class CustomerController {
     @GetMapping("/{requestedId}")
-    private ResponseEntity<String> findById() {
-          return ResponseEntity.ok("{}");
+    private ResponseEntity<Customer> findById(@PathVariable Long requestedId) {
+        //return ResponseEntity.ok("{}");
+//        Customer customer = new Customer(752068L, "Rex Wang", 55);
+//        return ResponseEntity.ok(customer);
+        if (requestedId.equals(752068L)){
+        Customer customer = new Customer(752068L, "Rex Wang", 55);
+        return ResponseEntity.ok(customer);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     } 
 }
