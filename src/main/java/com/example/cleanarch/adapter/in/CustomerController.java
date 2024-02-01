@@ -21,11 +21,16 @@ public class CustomerController {
         //return ResponseEntity.ok("{}");
 //        Customer customer = new Customer(752068L, "Rex Wang", 55);
 //        return ResponseEntity.ok(customer);
+//        if (requestedId.equals(752068L)) {
+//            Customer customer = new Customer(752068L, "Rex Wang", 55);
+//            return ResponseEntity.ok(customer);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
         Optional<Customer> customerOptional = customerRepository.findById(requestedId);
-        if (requestedId.equals(752068L)) {
-            Customer customer = new Customer(752068L, "Rex Wang", 55);
-            return ResponseEntity.ok(customer);
-        } else {
+        if(customerOptional.isPresent()){
+            return ResponseEntity.ok(customerOptional.get());
+        }else {
             return ResponseEntity.notFound().build();
         }
     }
