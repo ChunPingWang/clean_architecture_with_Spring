@@ -2,6 +2,7 @@ package com.example.cleanarch.adapter.in;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.example.cleanarch.adapter.Customer;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
@@ -45,5 +46,14 @@ public class CustomerApplicationTests {
         assertThat(response.getBody()).isBlank();
     }
 
+    @Test
+    void should_create_new_customer() {
+        Customer customer = new Customer(null, "Harry Wang", 23);
+        ResponseEntity<Void> createResponse = restTemplate.postForEntity("/customers", customer, Void.class);
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        URI locationOfNewCustomer= createResponse.getHeaders().getLocation();
 
+        ResponseEntity<String> getResponse = restTemplate.getForEntity(locationOfNewCustomer, String.class);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
 }
