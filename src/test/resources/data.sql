@@ -1,0 +1,1 @@
+INSERT INTO Customer(ID, NAME, AGE) VALUES (752068, 'Rex Wang', 55);

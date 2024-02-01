@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.swing.text.Document;
+import java.net.URI;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CustomerApplicationTests {
@@ -38,9 +39,11 @@ public class CustomerApplicationTests {
     }
 
     @Test
-    void should_not_return_a_customer_with_an_unknown_id(){
+    void should_not_return_a_customer_with_an_unknown_id() {
         ResponseEntity<String> response = restTemplate.getForEntity("/customers/1000", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isBlank();
     }
+
+
 }

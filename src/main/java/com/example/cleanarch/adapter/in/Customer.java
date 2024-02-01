@@ -1,4 +1,6 @@
 package com.example.cleanarch.adapter.in;
 
-record Customer(Long id, String name, int age) {
+import org.springframework.data.annotation.Id;
+
+public record Customer(@Id Long id, String name, int age) {
 }
