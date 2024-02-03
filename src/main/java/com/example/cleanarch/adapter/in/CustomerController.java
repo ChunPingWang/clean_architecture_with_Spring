@@ -3,11 +3,15 @@ package com.example.cleanarch.adapter.in;
 
 import com.example.cleanarch.adapter.Customer;
 import com.example.cleanarch.adapter.out.CustomerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -48,9 +52,19 @@ public class CustomerController {
         return ResponseEntity.created(locationOfNewCustomer).build();
     }
 
-    @GetMapping()
-    private ResponseEntity<Iterable<Customer>> findAll() {
-        return ResponseEntity.ok(customerRepository.findAll());
+//    @GetMapping()
+//    private ResponseEntity<Iterable<Customer>> findAll() {
+//        return ResponseEntity.ok(customerRepository.findAll());
+//    }
+
+    @GetMapping
+    private ResponseEntity<List<Customer>> findAll(Pageable pageable) {
+        Page<Customer> page = customerRepository.findAll(
+                PageRequest.of(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize()
+                ));
+        return ResponseEntity.ok(page.getContent());
     }
 
 }
