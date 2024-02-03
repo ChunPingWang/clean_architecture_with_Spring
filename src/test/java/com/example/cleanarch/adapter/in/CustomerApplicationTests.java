@@ -26,7 +26,7 @@ public class CustomerApplicationTests {
 
 
     @Test
-    void customerWhenDataIsSaved() {
+    void customer_when_data_is_saved() {
         ResponseEntity<String> response = restTemplate.getForEntity("/customers/752068", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
