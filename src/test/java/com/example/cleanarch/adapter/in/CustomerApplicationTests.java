@@ -81,4 +81,18 @@ public class CustomerApplicationTests {
         JSONArray amounts = documentContext.read("$..age");
         assertThat(amounts).containsExactlyInAnyOrder(55, 24, 52);
     }
+
+    @Test
+    void should_return_a_sorted_page_of_customers() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/customers?page=0&size=1&sort=age,desc", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(response.getBody());
+        JSONArray read = documentContext.read("$[*]");
+        assertThat(read.size()).isEqualTo(1);
+
+        int age = documentContext.read("$[0].age");
+        assertThat(age).isEqualTo(55);
+    }
+
 }
