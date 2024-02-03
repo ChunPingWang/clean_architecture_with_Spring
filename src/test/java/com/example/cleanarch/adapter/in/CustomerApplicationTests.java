@@ -5,17 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.example.cleanarch.adapter.Customer;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import org.assertj.core.util.Arrays;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import net.minidev.json.JSONArray;
 
-import javax.swing.text.Document;
-import java.lang.reflect.Array;
 import java.net.URI;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -66,5 +63,22 @@ public class CustomerApplicationTests {
     void should_return_all_customers_when_list_is_requested() {
         ResponseEntity<String> response = restTemplate.getForEntity("/customers", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void should_return_all_customers_when_list_is_requested_v2() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/customers", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(response.getBody());
+        int customerCount= documentContext.read("$.length()");
+        assertThat(customerCount).isEqualTo(3);
+
+
+        JSONArray ids = documentContext.read("$..id");
+        assertThat(ids).containsExactlyInAnyOrder(752068, 111111, 222222);
+
+        JSONArray amounts = documentContext.read("$..age");
+        assertThat(amounts).containsExactlyInAnyOrder(55, 24, 52);
     }
 }
