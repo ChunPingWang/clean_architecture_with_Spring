@@ -61,4 +61,10 @@ public class CustomerApplicationTests {
         ResponseEntity<String> getResponse = restTemplate.getForEntity(locationOfNewCustomer, String.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
+
+    @Test
+    void should_return_all_customers_when_list_is_requested() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/customers", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
 }

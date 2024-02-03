@@ -48,5 +48,9 @@ public class CustomerController {
         return ResponseEntity.created(locationOfNewCustomer).build();
     }
 
+    @GetMapping()
+    private ResponseEntity<Iterable<Customer>> findAll() {
+        return ResponseEntity.ok(customerRepository.findAll());
+    }
 
 }
