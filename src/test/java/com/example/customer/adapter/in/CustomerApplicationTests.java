@@ -1,17 +1,20 @@
-package com.example.cleanarch.adapter.in;
+package com.example.customer.adapter.in;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.cleanarch.adapter.Customer;
+import com.example.customer.adapter.Customer;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import net.minidev.json.JSONArray;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.URI;
 
@@ -20,8 +23,7 @@ public class CustomerApplicationTests {
     @Autowired
     TestRestTemplate restTemplate;
 
-
-
+    //GetMapping Test
     @Test
     void customer_when_data_is_saved() {
         ResponseEntity<String> response = restTemplate.getForEntity("/customers/752068", String.class);
@@ -41,6 +43,7 @@ public class CustomerApplicationTests {
 
     }
 
+    //GetMapping Test
     @Test
     void should_not_return_a_customer_with_an_unknown_id() {
         ResponseEntity<String> response = restTemplate.getForEntity("/customers/1000", String.class);
@@ -48,17 +51,19 @@ public class CustomerApplicationTests {
         assertThat(response.getBody()).isBlank();
     }
 
+    //PostMapping Test - fail
     @Test
     void should_create_new_customer() {
         Customer customer = new Customer(null, "Harry Wang", 23);
         ResponseEntity<Void> createResponse = restTemplate.postForEntity("/customers", customer, Void.class);
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        URI locationOfNewCustomer= createResponse.getHeaders().getLocation();
+        URI locationOfNewCustomer = createResponse.getHeaders().getLocation();
 
         ResponseEntity<String> getResponse = restTemplate.getForEntity(locationOfNewCustomer, String.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    //GetMapping Test
     @Test
     void should_return_all_customers_when_list_is_requested() {
         ResponseEntity<String> response = restTemplate.getForEntity("/customers", String.class);
@@ -71,7 +76,7 @@ public class CustomerApplicationTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         DocumentContext documentContext = JsonPath.parse(response.getBody());
-        int customerCount= documentContext.read("$.length()");
+        int customerCount = documentContext.read("$.length()");
         assertThat(customerCount).isEqualTo(3);
 
 
@@ -93,6 +98,26 @@ public class CustomerApplicationTests {
 
         int age = documentContext.read("$[0].age");
         assertThat(age).isEqualTo(55);
+    }
+
+    @Test
+    @DirtiesContext
+    void should_update_an_existing_customer() {
+        Customer customer = new Customer(null, "Harry Wang", 23);
+        HttpEntity<Customer> request = new HttpEntity<>(customer);
+        ResponseEntity<Void> response = restTemplate
+                .exchange("/customers/752068", HttpMethod.PUT, request, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    @DirtiesContext
+    void should_not_update_an_nonexisting_customer() {
+        Customer customer = new Customer(null, "Harry Wang", 23);
+        HttpEntity<Customer> request = new HttpEntity<>(customer);
+        ResponseEntity<Void> response = restTemplate
+                .exchange("/customers/000000", HttpMethod.PUT, request, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
 }

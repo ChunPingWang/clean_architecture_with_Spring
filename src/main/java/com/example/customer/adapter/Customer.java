@@ -1,4 +1,4 @@
-package com.example.cleanarch.adapter;
+package com.example.customer.adapter;
 
 import org.springframework.data.annotation.Id;
 

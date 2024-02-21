@@ -1,6 +1,6 @@
-package com.example.cleanarch.adapter.out;
+package com.example.customer.adapter.out;
 
-import com.example.cleanarch.adapter.Customer;
+import com.example.customer.adapter.Customer;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 

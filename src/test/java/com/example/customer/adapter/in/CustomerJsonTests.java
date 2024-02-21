@@ -1,6 +1,6 @@
-package com.example.cleanarch.adapter.in;
+package com.example.customer.adapter.in;
 
-import com.example.cleanarch.adapter.Customer;
+import com.example.customer.adapter.Customer;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

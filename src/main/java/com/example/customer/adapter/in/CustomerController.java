@@ -1,8 +1,8 @@
-package com.example.cleanarch.adapter.in;
+package com.example.customer.adapter.in;
 
 
-import com.example.cleanarch.adapter.Customer;
-import com.example.cleanarch.adapter.out.CustomerRepository;
+import com.example.customer.adapter.Customer;
+import com.example.customer.adapter.out.CustomerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +23,7 @@ public class CustomerController {
     private CustomerController(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
+
     @GetMapping("/{requestedId}")
     private ResponseEntity<Customer> findById(@PathVariable Long requestedId) {
 //return ResponseEntity.ok("{}");
@@ -37,9 +38,9 @@ public class CustomerController {
 //        }
 // 使用資料庫
         Optional<Customer> customerOptional = customerRepository.findById(requestedId);
-        if(customerOptional.isPresent()){
+        if (customerOptional.isPresent()) {
             return ResponseEntity.ok(customerOptional.get());
-        }else {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
@@ -67,5 +68,20 @@ public class CustomerController {
                 ));
         return ResponseEntity.ok(page.getContent());
     }
+
+    @PutMapping("/{requestedId}")
+    private ResponseEntity<Void> putCashCard(@PathVariable Long requestedId, @RequestBody  Customer requestCustomer) {
+        // just return 204 NO CONTENT for now.
+
+        Optional<Customer> customerOptional = customerRepository.findById(requestedId);
+        if (customerOptional.isPresent()) {
+            Customer updatedCustomer = new Customer(requestCustomer.id(), requestCustomer.name(), requestCustomer.age());
+            customerRepository.save(updatedCustomer);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 }
