@@ -1,0 +1,52 @@
+name: Deploy Spring Boot to OpenShift
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build Spring Boot JAR
+        run: ./gradlew clean build -x test
+
+      - name: Set image tag
+        id: vars
+        run: echo "TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      - name: Log in to container registry
+        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.REGISTRY_URL }}/spring-app:${{ env.TAG }} .
+          docker push ${{ secrets.REGISTRY_URL }}/spring-app:${{ env.TAG }}
+
+      - name: Install OpenShift CLI
+        run: |
+          curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
+          tar -xzf oc.tar.gz
+          sudo mv oc /usr/local/bin/
+
+      - name: Login to OpenShift
+        run: |
+          oc login ${{ secrets.OCP_API_URL }} --token=${{ secrets.OCP_TOKEN }} --insecure-skip-tls-verify=true
+          oc project ${{ secrets.NAMESPACE }}
+
+      - name: Apply deployment
+        run: |
+          oc set image deployment/spring-app spring-app=${{ secrets.REGISTRY_URL }}/spring-app:${{ env.TAG }} || \
+          oc apply -f k8s/deployment.yaml
+
