@@ -27,7 +27,7 @@ jobs:
         run: echo "TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
 
       - name: Log in to container registry
-        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin || true
 
       - name: Build and push Docker image
         run: |
